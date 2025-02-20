@@ -1,50 +1,50 @@
 <template>
-  <div class="flex h-screen bg-cover bg-center" style="background-image: url('/gradient.svg');">
-    <!-- Partie gauche avec l'image -->
-    <div class="w-1/2 flex items-center justify-center relative">
+  <div class="flex flex-col md:flex-row h-full bg-cover md:bg-center bg-left" style="background-image: url('/gradient.svg');">
+    <!-- Partie gauche (image) -->
+    <div class="w-full md:w-1/2 flex items-center justify-center relative py-10">
       <div class="absolute w-3/4 h-3/4"></div>
-      <img src="/character.svg" alt="Illustration" class="relative w-2/3" />
+      <img src="/character.svg" alt="Illustration" class="relative w-2/3 md:w-1/2" />
     </div>
 
-    <!-- Partie droite avec le formulaire -->
-    <div class="w-1/2 backdrop-blur-lg shadow-lg">
-      <div class="p-10 my-10 w-3/4">
-        <h1 class="text-3xl font-medium mb-10 text-black">Yellow ! Rejoignez l’aventure !</h1>
-        <p v-if="step === 1 || step === 2" class="text-gray-600 mb-6 text-xl">Identifiez-vous</p>
-        <p v-if="step === 3" class="text-gray-600 mb-6 text-xl">Plus qu'une étape</p>
-        
+    <!-- Partie droite (formulaire) -->
+    <div class="w-full md:w-1/2 backdrop-blur-lg shadow-lg flex justify-center py-10">
+      <div class="p-6 md:p-10 w-11/12 md:w-3/4">
+        <h1 class="text-2xl md:text-3xl font-medium mb-6 text-black text-center md:text-left">Yellow ! Rejoignez l’aventure !</h1>
+        <p v-if="step === 1 || step === 2" class="text-gray-600 mb-6 text-lg md:text-xl text-center md:text-left">Identifiez-vous</p>
+        <p v-if="step === 3" class="text-gray-600 mb-6 text-lg md:text-xl text-center md:text-left">Plus qu'une étape</p>
+
         <hr class="mb-5">
 
         <form @submit.prevent="submitForm">
           <!-- Étape 1 -->
           <div v-if="step === 1">
-            <div class="mb-10">
+            <div class="mb-6 md:mb-10">
               <label class="block text-gray-700">Nom</label>
-              <input type="text" v-model="form.nom" placeholder="LABELLE" class="w-full px-4 py-6 border rounded-lg focus:outline-none" />
+              <input type="text" v-model="form.nom" placeholder="LABELLE" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
             </div>
-            <div class="mb-10">
+            <div class="mb-6 md:mb-10">
               <label class="block text-gray-700">Prénom</label>
-              <input type="text" v-model="form.prenom" placeholder="MAYA" class="w-full px-4 py-6 border rounded-lg focus:outline-none" />
+              <input type="text" v-model="form.prenom" placeholder="MAYA" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
             </div>
-            <div class="mb-10">
+            <div class="mb-6 md:mb-10">
               <label class="block text-gray-700">Date de naissance</label>
-              <input type="date" v-model="form.date" class="w-full px-4 py-6 border rounded-lg focus:outline-none" />
+              <input type="date" v-model="form.date" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
             </div>
           </div>
 
           <!-- Étape 2 -->
           <div v-if="step === 2">
-            <div class="mb-10">
+            <div class="mb-6 md:mb-10">
               <label class="block text-gray-700">Numéro de téléphone</label>
-              <input type="text" v-model="form.numero" @focus="formatNumero" @input="formatNumero" placeholder="01 XXXXXXXX" class="w-full px-4 py-6 border rounded-lg focus:outline-none" />
+              <input type="text" v-model="form.numero" @focus="formatNumero" @input="formatNumero" placeholder="01 XXXXXXXX" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
             </div>
-            <div class="mb-10">
+            <div class="mb-6 md:mb-10">
               <label class="block text-gray-700">Ville</label>
-              <input type="text" v-model="form.ville" class="w-full px-4 py-6 border rounded-lg focus:outline-none" />
+              <input type="text" v-model="form.ville" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
             </div>
-            <div class="mb-10">
+            <div class="mb-6 md:mb-10">
               <label class="block text-gray-700">Quartier</label>
-              <input type="text" v-model="form.quartier" class="w-full px-4 py-6 border rounded-lg focus:outline-none" />
+              <input type="text" v-model="form.quartier" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
             </div>
           </div>
 
@@ -52,7 +52,7 @@
           <div v-if="step === 3">
             <label class="block text-gray-700">Vérification OTP</label>
             <p class="text-gray-600 mb-2">Saisir le code envoyé au {{ form.numero }}</p>
-            <div class="flex space-x-2">
+            <div class="flex justify-center space-x-2">
               <input
                 v-for="(digit, index) in otp"
                 :key="index"
@@ -61,23 +61,23 @@
                 v-model="otp[index]"
                 :ref="`otpInput${index}`"
                 @input="focusNext(index)"
-                class="w-15 h-15 text-center border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-white mr-5"
+                class="w-12 h-12 md:w-15 md:h-15 text-center border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-white"
               />
-              <p v-if="otpError" class="text-red-500 mt-2">{{ otpError }}</p>
             </div>
+            <p v-if="otpError" class="text-red-500 mt-2 text-center">{{ otpError }}</p>
           </div>
-          
-          <!-- Boutons de navigation -->
-          <div class="flex justify-between mt-4">
-            <!-- <button type="button" @click="prevStep" v-if="step > 1" class="bg-gray-300 text-black py-6 px-4 rounded-lg hover:bg-gray-400">Précédent</button> -->
-            <button type="button" @click="nextStep" v-if="step < 3" class="bg-yellow-500 text-white py-6 px-4 rounded-lg w-full">Continuer</button>
-            <button type="submit" v-if="step === 3" class="bg-yellow-500 text-white py-6 px-4 rounded-lg w-full self-end">Vous êtes prêt ! </button>
+
+          <!-- Boutons -->
+          <div class="flex flex-col mt-6 space-y-4">
+            <button type="button" @click="nextStep" v-if="step < 3" class="bg-yellow-500 text-white py-3 md:py-6 px-4 rounded-lg w-full">Continuer</button>
+            <button type="submit" v-if="step === 3" class="bg-yellow-500 text-white py-3 md:py-6 px-4 rounded-lg w-full">Vous êtes prêt !</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 </template>
+
   
 <script>
 export default {
