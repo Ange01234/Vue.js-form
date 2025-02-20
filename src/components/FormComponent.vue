@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col md:flex-row h-full bg-cover md:bg-center bg-left" style="background-image: url('/gradient.svg');">
+  <div class="flex flex-col md:flex-row h-screen bg-cover md:bg-center bg-left" style="background-image: url('/gradient.svg');">
     <!-- Partie gauche (image) -->
     <div class="w-full md:w-1/2 flex items-center justify-center relative py-10">
       <div class="absolute w-3/4 h-3/4"></div>
@@ -20,15 +20,16 @@
           <div v-if="step === 1">
             <div class="mb-6 md:mb-10">
               <label class="block text-gray-700">Nom</label>
-              <input type="text" v-model="form.nom" placeholder="LABELLE" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
+              <input required type="text" v-model="form.nom" placeholder="LABELLE" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none " />
             </div>
             <div class="mb-6 md:mb-10">
               <label class="block text-gray-700">Prénom</label>
-              <input type="text" v-model="form.prenom" placeholder="MAYA" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
+              <input required type="text" v-model="form.prenom" placeholder="MAYA" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
             </div>
             <div class="mb-6 md:mb-10">
               <label class="block text-gray-700">Date de naissance</label>
-              <input type="date" v-model="form.date" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
+              <input required type="date" v-model="form.date" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
+              <p v-if="dateError" class="text-red-500 mt-2 text-center">{{ dateError }}</p>
             </div>
           </div>
 
@@ -36,15 +37,15 @@
           <div v-if="step === 2">
             <div class="mb-6 md:mb-10">
               <label class="block text-gray-700">Numéro de téléphone</label>
-              <input type="text" v-model="form.numero" @focus="formatNumero" @input="formatNumero" placeholder="01 XXXXXXXX" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
+              <input required type="text" v-model="form.numero" @focus="formatNumero" @input="formatNumero" placeholder="01 XXXXXXXX" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
             </div>
             <div class="mb-6 md:mb-10">
               <label class="block text-gray-700">Ville</label>
-              <input type="text" v-model="form.ville" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
+              <input required type="text" v-model="form.ville" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
             </div>
             <div class="mb-6 md:mb-10">
               <label class="block text-gray-700">Quartier</label>
-              <input type="text" v-model="form.quartier" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
+              <input required type="text" v-model="form.quartier" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
             </div>
           </div>
 
@@ -52,8 +53,8 @@
           <div v-if="step === 3">
             <label class="block text-gray-700">Vérification OTP</label>
             <p class="text-gray-600 mb-2">Saisir le code envoyé au {{ form.numero }}</p>
-            <div class="flex justify-center space-x-2">
-              <input
+            <div class="flex space-x-2">
+              <input required
                 v-for="(digit, index) in otp"
                 :key="index"
                 type="text"
@@ -61,6 +62,7 @@
                 v-model="otp[index]"
                 :ref="`otpInput${index}`"
                 @input="focusNext(index)"
+                :disabled="!canProceedToNextStep()"
                 class="w-12 h-12 md:w-15 md:h-15 text-center border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-white"
               />
             </div>
@@ -94,9 +96,18 @@ export default {
       },
       otp: Array(4).fill(""), // Tableau pour stocker les 4 chiffres de l'OTP
       otpError: "",
+      dateError: "",
     };
   },
   methods: {
+    canProceedToNextStep() {
+      if (this.step === 1) {
+        return this.form.nom && this.form.prenom && this.form.date;
+      } else if (this.step === 2) {
+        return this.form.numero && this.form.ville && this.form.quartier;
+      }
+      return true;
+    },
     formatNumero(event) {
       let input = event.target.value.replace(/\D/g, ""); // Supprime tout sauf les chiffres
       if (!input.startsWith("01")) {
@@ -104,7 +115,26 @@ export default {
       }
       this.form.numero = input.slice(0, 10); // Limite à 10 caractères (01 + 8 chiffres)
     },
+    calculateAge(date) {
+      const birthDate = new Date(date);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      return age;
+    },
     nextStep() {
+      if (!this.canProceedToNextStep()) return;
+      if (this.step === 1) {
+        const age = this.calculateAge(this.form.date);
+        if (age < 18) {
+          this.dateError="Vous devez avoir au moins 18 ans pour vous inscrire.";
+          return;
+        }
+      }
       if (this.step < 3) this.step++;
     },
     prevStep() {
@@ -128,7 +158,7 @@ export default {
 
 label {
   font-size: 21px;
-  font-weight: semi-bold;
+  font-weight: bold;
 }
 </style>
   
