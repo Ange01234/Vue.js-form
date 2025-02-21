@@ -8,7 +8,7 @@
 
     <!-- Partie droite (formulaire) -->
     <div class="w-full md:w-1/2 backdrop-blur-lg shadow-lg flex justify-center py-10 h-full">
-      <div class="p-6 md:p-10 w-11/12 md:w-3/4">
+      <div class="p-5 md:p-5 w-11/12 md:w-3/4">
         <h1 class="text-2xl md:text-3xl font-medium mb-6 text-black text-center md:text-left">Yellow ! Rejoignez l’aventure !</h1>
         <p v-if="step === 1 || step === 2" class="text-gray-600 mb-6 text-lg md:text-xl text-center md:text-left">Identifiez-vous</p>
         <p v-if="step === 3" class="text-gray-600 mb-6 text-lg md:text-xl text-center md:text-left">Plus qu'une étape</p>
