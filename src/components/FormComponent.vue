@@ -8,7 +8,7 @@
 
     <!-- Partie droite (formulaire) -->
     <div class="w-full md:w-1/2 backdrop-blur-lg shadow-lg flex justify-center py-10 h-full">
-      <div class="p-5 md:p-5 w-11/12 md:w-3/4">
+      <div class="p-5 md:p-5 w-11/12 md:w-3/4 max-h-80">
         <h1 class="text-2xl md:text-3xl font-medium mb-6 text-black text-center md:text-left">Yellow ! Rejoignez l’aventure !</h1>
         <p v-if="step === 1 || step === 2" class="text-gray-600 mb-6 text-lg md:text-xl text-center md:text-left">Identifiez-vous</p>
         <p v-if="step === 3" class="text-gray-600 mb-6 text-lg md:text-xl text-center md:text-left">Plus qu'une étape</p>
@@ -19,33 +19,38 @@
           <!-- Étape 1 -->
           <div v-if="step === 1">
             <div class="mb-5 md:mb-8">
-              <label class="block text-gray-700">Nom</label>
-              <input required type="text" v-model="form.nom" placeholder="LABELLE" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none " />
+              <label class="block text-gray-700">Nom *</label>
+              <input required="true" type="text" v-model="form.nom" placeholder="LABELLE" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none " />
+              <p v-if="error.nom" class="text-red-500 text-center">{{ error.nom }}</p>
             </div>
             <div class="mb-5 md:mb-8">
-              <label class="block text-gray-700">Prénom</label>
+              <label class="block text-gray-700">Prénom *</label>
               <input required type="text" v-model="form.prenom" placeholder="MAYA" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
+              <p v-if="error.prenom" class="text-red-500 text-center">{{ error.prenom }}</p>
             </div>
             <div class="mb-5 md:mb-8">
-              <label class="block text-gray-700">Date de naissance</label>
+              <label class="block text-gray-700">Date de naissance *</label>
               <input required type="date" v-model="form.date" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
-              <p v-if="dateError" class="text-red-500 text-center">{{ dateError }}</p>
+              <p v-if="error.date" class="text-red-500 text-center">{{ error.date }}</p>
             </div>
           </div>
 
           <!-- Étape 2 -->
           <div v-if="step === 2">
             <div class="mb-5 md:mb-8">
-              <label class="block text-gray-700">Numéro de téléphone</label>
+              <label class="block text-gray-700">Numéro de téléphone *</label>
               <input required type="text" v-model="form.numero" @focus="formatNumero" @input="formatNumero" placeholder="01 XXXXXXXX" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
+              <p v-if="error.number" class="text-red-500 text-center">{{ error.number }}</p>
             </div>
             <div class="mb-5 md:mb-8">
-              <label class="block text-gray-700">Ville</label>
+              <label class="block text-gray-700">Ville *</label>
               <input required type="text" v-model="form.ville" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
+              <p v-if="error.ville" class="text-red-500 text-center">{{ error.ville }}</p>
             </div>
             <div class="mb-5 md:mb-8">
-              <label class="block text-gray-700">Quartier</label>
+              <label class="block text-gray-700">Quartier *</label>
               <input required type="text" v-model="form.quartier" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
+              <p v-if="error.quartier" class="text-red-500 text-center">{{ error.quartier }}</p>
             </div>
           </div>
 
@@ -53,7 +58,7 @@
           <div v-if="step === 3">
             <label class="block text-gray-700">Vérification OTP</label>
             <p class="text-gray-600 mb-2">Saisir le code envoyé au {{ form.numero }}</p>
-            <div class="flex space-x-2">
+            <div class="flex space-x-4 justify-center mb-6">
               <input required
                 v-for="(digit, index) in otp"
                 :key="index"
@@ -96,18 +101,10 @@ export default {
       },
       otp: Array(4).fill(""), // Tableau pour stocker les 4 chiffres de l'OTP
       otpError: "",
-      dateError: "",
+      error: {},
     };
   },
   methods: {
-    canProceedToNextStep() {
-      if (this.step === 1) {
-        return this.form.nom && this.form.prenom && this.form.date;
-      } else if (this.step === 2) {
-        return this.form.numero && this.form.ville && this.form.quartier;
-      }
-      return true;
-    },
     formatNumero(event) {
       let input = event.target.value.replace(/\D/g, ""); // Supprime tout sauf les chiffres
       if (!input.startsWith("01")) {
@@ -126,16 +123,23 @@ export default {
       }
       return age;
     },
-    nextStep() {
-      if (!this.canProceedToNextStep()) return;
+    validateStep() {
+      this.error = {};
       if (this.step === 1) {
-        const age = this.calculateAge(this.form.date);
-        if (age < 18) {
-          this.dateError="Vous devez avoir au moins 18 ans pour vous inscrire.";
-          return;
-        }
+        if (!this.form.nom) this.error.nom = "Le nom est requis.";
+        if (!this.form.prenom) this.error.prenom = "Le prénom est requis.";
+        if (!this.form.date) this.error.date = "La date de naissance est requise.";
+      } else if (this.step === 2) {
+        if (!this.form.numero || this.form.numero.length !== 10) this.error.numero = "Numéro de téléphone invalide.";
+        if (!this.form.ville) this.error.ville = "La ville est requise.";
+        if (!this.form.quartier) this.error.quartier = "Le quartier est requis.";
       }
-      if (this.step < 3) this.step++;
+      return Object.keys(this.error).length === 0;
+    },
+    nextStep() {
+      if (this.validateStep()) {
+        this.step++;
+      }
     },
     prevStep() {
       if (this.step > 1) this.step--;
