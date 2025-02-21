@@ -29,7 +29,7 @@
             <div class="mb-5 md:mb-8">
               <label class="block text-gray-700">Date de naissance</label>
               <input required type="date" v-model="form.date" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
-              <p v-if="dateError" class="text-red-500 mt-2 text-center">{{ dateError }}</p>
+              <p v-if="dateError" class="text-red-500 text-center">{{ dateError }}</p>
             </div>
           </div>
 
@@ -70,7 +70,7 @@
           </div>
 
           <!-- Boutons -->
-          <div class="flex flex-col mt-4">
+          <div class="flex flex-col">
             <button type="button" @click="nextStep" v-if="step < 3" class="bg-yellow-500 text-white py-3 md:py-4 px-4 rounded-lg w-full">Continuer</button>
             <button type="submit" v-if="step === 3" class="bg-yellow-500 text-white py-3 md:py-4 px-4 rounded-lg w-full">Vous êtes prêt !</button>
           </div>
