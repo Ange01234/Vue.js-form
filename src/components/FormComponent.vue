@@ -1,13 +1,13 @@
 <template>
   <div class="flex flex-col md:flex-row h-screen bg-cover md:bg-center bg-left" style="background-image: url('/gradient.svg');">
     <!-- Partie gauche (image) -->
-    <div class="w-full md:w-1/2 flex items-center justify-center relative py-10">
+    <div class="w-full md:w-1/2 flex items-center justify-center relative py-10 h-full">
       <div class="absolute w-3/4 h-3/4"></div>
       <img src="/character.svg" alt="Illustration" class="relative w-2/3 md:w-1/2" />
     </div>
 
     <!-- Partie droite (formulaire) -->
-    <div class="w-full md:w-1/2 backdrop-blur-lg shadow-lg flex justify-center py-10">
+    <div class="w-full md:w-1/2 backdrop-blur-lg shadow-lg flex justify-center py-10 h-full">
       <div class="p-6 md:p-10 w-11/12 md:w-3/4">
         <h1 class="text-2xl md:text-3xl font-medium mb-6 text-black text-center md:text-left">Yellow ! Rejoignez l’aventure !</h1>
         <p v-if="step === 1 || step === 2" class="text-gray-600 mb-6 text-lg md:text-xl text-center md:text-left">Identifiez-vous</p>
