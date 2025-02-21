@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col md:flex-row h-screen bg-cover md:bg-center bg-left" style="background-image: url('/gradient.svg');">
+  <div class="flex flex-col md:flex-row h-dvh bg-cover md:bg-center bg-left" style="background-image: url('/gradient.svg');">
     <!-- Partie gauche (image) -->
     <div class="w-full md:w-1/2 flex items-center justify-center relative py-10 h-full">
       <div class="absolute w-3/4 h-3/4"></div>
