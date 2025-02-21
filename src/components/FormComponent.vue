@@ -7,7 +7,7 @@
     </div>
 
     <!-- Partie droite (formulaire) -->
-    <div class="w-full md:w-1/2 backdrop-blur-lg shadow-lg flex justify-center py-10 h-full">
+    <div class="w-full md:w-1/2 backdrop-blur-lg shadow-lg flex justify-center py-10 h-full overflow-auto">
       <div class="p-6 md:p-10 w-11/12 md:w-3/4">
         <h1 class="text-2xl md:text-3xl font-medium mb-6 text-black text-center md:text-left">Yellow ! Rejoignez l’aventure !</h1>
         <p v-if="step === 1 || step === 2" class="text-gray-600 mb-6 text-lg md:text-xl text-center md:text-left">Identifiez-vous</p>
@@ -20,15 +20,15 @@
           <div v-if="step === 1">
             <div class="mb-6 md:mb-10">
               <label class="block text-gray-700">Nom</label>
-              <input required type="text" v-model="form.nom" placeholder="LABELLE" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none " />
+              <input required type="text" v-model="form.nom" placeholder="LABELLE" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none " />
             </div>
             <div class="mb-6 md:mb-10">
               <label class="block text-gray-700">Prénom</label>
-              <input required type="text" v-model="form.prenom" placeholder="MAYA" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
+              <input required type="text" v-model="form.prenom" placeholder="MAYA" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
             </div>
             <div class="mb-6 md:mb-10">
               <label class="block text-gray-700">Date de naissance</label>
-              <input required type="date" v-model="form.date" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
+              <input required type="date" v-model="form.date" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
               <p v-if="dateError" class="text-red-500 mt-2 text-center">{{ dateError }}</p>
             </div>
           </div>
@@ -37,15 +37,15 @@
           <div v-if="step === 2">
             <div class="mb-6 md:mb-10">
               <label class="block text-gray-700">Numéro de téléphone</label>
-              <input required type="text" v-model="form.numero" @focus="formatNumero" @input="formatNumero" placeholder="01 XXXXXXXX" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
+              <input required type="text" v-model="form.numero" @focus="formatNumero" @input="formatNumero" placeholder="01 XXXXXXXX" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
             </div>
             <div class="mb-6 md:mb-10">
               <label class="block text-gray-700">Ville</label>
-              <input required type="text" v-model="form.ville" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
+              <input required type="text" v-model="form.ville" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
             </div>
             <div class="mb-6 md:mb-10">
               <label class="block text-gray-700">Quartier</label>
-              <input required type="text" v-model="form.quartier" class="w-full px-4 py-3 md:py-6 border rounded-lg focus:outline-none" />
+              <input required type="text" v-model="form.quartier" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
             </div>
           </div>
 
@@ -71,8 +71,8 @@
 
           <!-- Boutons -->
           <div class="flex flex-col mt-6 space-y-4">
-            <button type="button" @click="nextStep" v-if="step < 3" class="bg-yellow-500 text-white py-3 md:py-6 px-4 rounded-lg w-full">Continuer</button>
-            <button type="submit" v-if="step === 3" class="bg-yellow-500 text-white py-3 md:py-6 px-4 rounded-lg w-full">Vous êtes prêt !</button>
+            <button type="button" @click="nextStep" v-if="step < 3" class="bg-yellow-500 text-white py-3 md:py-4 px-4 rounded-lg w-full">Continuer</button>
+            <button type="submit" v-if="step === 3" class="bg-yellow-500 text-white py-3 md:py-4 px-4 rounded-lg w-full">Vous êtes prêt !</button>
           </div>
         </form>
       </div>
