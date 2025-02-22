@@ -84,7 +84,7 @@
           </div>
 
           <!-- Boutons -->
-          <div class="flex flex-col">
+          <div class="flex flex-col mb-3">
             <button type="button" @click="nextStep" v-if="step < 3" class="bg-yellow-500 text-white py-3 md:py-4 px-4 rounded-lg w-full">Continuer</button>
             <button type="submit" v-if="step === 3" class="bg-yellow-500 text-white py-3 md:py-4 px-4 rounded-lg w-full">Vous êtes prêt !</button>
           </div>
