@@ -44,12 +44,23 @@
             </div>
             <div class="mb-5 md:mb-8">
               <label class="block text-gray-700">Ville *</label>
-              <input required type="text" v-model="form.ville" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
+              <select v-model="form.ville" @change="fetchQuartiers" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none">
+                <option value="" disabled>Choisissez une ville</option>
+                <option v-for="ville in villes" :key="ville" :value="ville">
+                  {{ ville }}
+                </option>
+              </select>
               <p v-if="error.ville" class="text-red-500 text-center">{{ error.ville }}</p>
             </div>
+
             <div class="mb-5 md:mb-8">
               <label class="block text-gray-700">Quartier *</label>
-              <input required type="text" v-model="form.quartier" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
+              <select v-model="form.quartier" :disabled="!form.ville" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none">
+                <option value="" disabled>Choisissez un quartier</option>
+                <option v-for="quartier in quartiers" :key="quartier" :value="quartier">
+                  {{ quartier }}
+                </option>
+              </select>
               <p v-if="error.quartier" class="text-red-500 text-center">{{ error.quartier }}</p>
             </div>
           </div>
@@ -170,8 +181,37 @@ export default {
       if (this.otp[index].length === 1 && index < 3) {
         this.$refs[`otpInput${index + 1}`][0].focus();
       }
-    }
+    },
+    async fetchVilles() {
+      try {
+        const response = await fetch(
+          "https://nominatim.openstreetmap.org/search?country=Benin&format=json&polygon_geojson=1"
+        );
+        const data = await response.json();
+        console.log(data);
+        const uniqueVilles = new Set(
+          data.map((entry) => entry.display_name.split(",")[0].trim())
+        );
+        this.villes = Array.from(uniqueVilles).sort();
+      } catch (error) {
+        console.error("Erreur lors de la récupération des villes :", error);
+      }
+    },
+    async fetchQuartiers() {
+      if (!this.form.ville) return;
+
+      try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?city=${this.form.ville}&country=Benin&format=json`);
+        const data = await response.json();
+        this.quartiers = data.map(q => q.display_name.split(",")[0]); // Extraire juste le nom du quartier
+      } catch (error) {
+        console.error("Erreur lors de la récupération des quartiers :", error);
+      }
+    },
   },
+  mounted() {
+    this.fetchVilles();
+  }
 };
 </script>
   
@@ -184,3 +224,4 @@ label {
 }
 </style>
   
+
