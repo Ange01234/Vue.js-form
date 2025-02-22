@@ -7,7 +7,7 @@
     </div>
 
     <!-- Partie droite (formulaire) -->
-    <div class="w-full md:w-1/2 backdrop-blur-lg shadow-lg flex justify-center py-10 h-full">
+    <div class="w-full md:w-1/2 backdrop-blur-lg shadow-lg flex justify-center py-10 h-full overflow-auto">
       <div class="p-5 md:p-5 w-11/12 md:w-3/4 max-h-80">
         <h1 class="text-2xl md:text-3xl font-medium mb-6 text-black text-center md:text-left">Yellow ! Rejoignez l’aventure !</h1>
         <p v-if="step === 1 || step === 2" class="text-gray-600 mb-6 text-lg md:text-xl text-center md:text-left">Identifiez-vous</p>
@@ -44,13 +44,23 @@
             </div>
             <div class="mb-5 md:mb-8">
               <label class="block text-gray-700">Ville *</label>
-              <input required type="text" v-model="form.ville" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
-              <p v-if="error.ville" class="text-red-500 text-center">{{ error.ville }}</p>
+              <input required type="text" v-model="form.town" @input="filterTowns" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
+              <ul v-if="Towns.length">
+                <li v-for="(town, index) in suggestions" :key="index" @click="selectTown(town)">
+                  {{ town }}
+                </li>
+              </ul>
+              <p v-if="error.town" class="text-red-500 text-center">{{ error.town }}</p>
             </div>
             <div class="mb-5 md:mb-8">
               <label class="block text-gray-700">Quartier *</label>
-              <input required type="text" v-model="form.quartier" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
-              <p v-if="error.quartier" class="text-red-500 text-center">{{ error.quartier }}</p>
+              <input required type="text" v-model="form.district" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
+              <!-- <ul v-if="Districts.length">
+                <li v-for="(district, index) in suggestions" :key="index" @click="selectDistrict(district)">
+                  {{ district }}
+                </li>
+              </ul> -->
+              <p v-if="error.district" class="text-red-500 text-center">{{ error.district }}</p>
             </div>
           </div>
 
@@ -95,12 +105,15 @@ export default {
         prenom: "",
         date: "",
         numero: "",
-        ville: "",
-        quartier: ""
+        town: "",
+        district: ""
       },
       otp: Array(4).fill(""), // Tableau pour stocker les 4 chiffres de l'OTP
       otpError: "",
       error: {},
+      suggestions: [],
+      Towns: ['BANIKOARA', 'GOGOUNOU', 'KANDI', 'KARIMAMA', 'MALANVILLE', 'SEGBANA', 'BOUKOUMBE', 'COBLY', 'KEROU', 'KOUANDE', 'MATERI', 'NATITINGOU', 'OUASSA-PEHUNCO', 'TANGUIETA', 'TOUKOUNTOUNA', 'ABOMEY-CALAVI', 'ALLADA', 'KPOMASSE', 'OUIDAH', 'SO-AVA', 'TOFFO', 'TORI-BOSSITO', 'ZE', 'BEMBEREKE', 'KALALE', 'N\'DALI', 'NIKKI', 'PARAKOU', 'PERERE', 'SINENDE', 'TCHAOUROU', 'BANTE', 'DASSA-ZOUME', 'GLAZOUE', 'OUESSE', 'SAVALOU', 'SAVE', 'APLAHOUE', 'DJAKOTOMEY', 'DOGBO', 'KLOUEKANMEY', 'LALO', 'TOVIKLIN', 'BASSILA', 'COPARGO', 'DJOUGOU', 'OUAKE', 'COTONOU', 'ATHIEME', 'BOPA', 'COME', 'GRAND-POPO', 'HOUEYOGBE', 'LOKOSSA', 'ADJARRA', 'ADJOHOUN', 'AGUEGUES', 'AKPRO-MISSERETE', 'AVRANKOU', 'BONOU', 'DANGBO', 'PORTO-NOVO', 'SEME-PODJI', 'ADJA-OUERE', 'IFANGNI', 'KETOU', 'POBE', 'SAKETE', 'ABOMEY', 'AGBANGNIZOUN', 'BOHICON', 'COVE', 'DJIDJA', 'OUINHI', 'ZAGNANADO', 'ZA-KPOTA', 'ZOGBODOMEY'],
+      District:[]
     };
   },
   methods: {
@@ -144,11 +157,11 @@ export default {
         if (!this.form.numero || this.form.numero.length !== 10) {
           this.error.numero = "Numéro de téléphone invalide.";
         }
-        if (!this.form.ville) {
-          this.error.ville = "La ville est requise.";
+        if (!this.form.town) {
+          this.error.town = "La ville est requise.";
         }
-        if (!this.form.quartier) {
-          this.error.quartier = "Le quartier est requis.";
+        if (!this.form.district) {
+          this.error.district = "Le quartier est requis.";
         }
       }
       return Object.keys(this.error).length === 0;
@@ -169,6 +182,22 @@ export default {
       if (this.otp[index].length === 1 && index < 3) {
         this.$refs[`otpInput${index + 1}`][0].focus();
       }
+    },
+    filterTowns() {
+      this.suggestions = this.form.town ? 
+        this.Towns.filter(town => town.toLowerCase().includes(this.form.town.toLowerCase())) : [];
+    },
+    selectTown(town) {
+      this.form.town = town;
+      this.suggestions = [];
+    },
+    filterDistricts() {
+      this.suggestions = this.form.district ? 
+        this.Districts.filter(district => district.toLowerCase().includes(this.form.district.toLowerCase())) : [];
+    },
+    selectDistrict(district) {
+      this.form.district = district;
+      this.suggestions = [];
     }
   },
 };
@@ -180,6 +209,23 @@ export default {
 label {
   font-size: 21px;
   font-weight: bold;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+li {
+  padding: 8px;
+  cursor: pointer;
+}
+li:hover {
+  background-color: #f0f0f0;
 }
 </style>
   
