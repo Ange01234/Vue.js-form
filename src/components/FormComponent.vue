@@ -67,7 +67,6 @@
                 v-model="otp[index]"
                 :ref="`otpInput${index}`"
                 @input="focusNext(index)"
-                :disabled="!validateStep()"
                 class="w-12 h-12 md:w-15 md:h-15 text-center border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-white"
               />
             </div>
