@@ -7,16 +7,30 @@
 
     <!-- Partie droite (formulaire) -->
     <div class="w-full md:w-1/2 bg-yellow-100/30 backdrop-blur-lg md:shadow-lg flex justify-center md:py-10 h-3/5 md:h-full">
-      <div class="p-0 md:p-5 w-11/12 md:w-3/4 max-h-80">
+      <div class="p-0 md:p-5 w-11/12 md:w-3/4 max-h-80 flex flex-col justify-between">
         <h1 class="text-2xl md:text-3xl font-medium mt-2 mb-2 md:mb-6 text-black text-center md:text-left">Yellow ! Rejoignez l’aventure !</h1>
-        <p v-if="step === 1 || step === 2" class="text-gray-600 md:mb-6 mb-2 text-lg md:text-xl text-center md:text-left">Identifiez-vous</p>
-        <p v-if="step === 3" class="text-gray-600 mb-6 text-lg md:text-xl text-center md:text-left">Plus qu'une étape</p>
 
-        <hr class="mb-5">
+        <div class="flex items-center space-x-2 mb-1">
+          <template v-for="index in steps" :key="index">
+            <div
+              class="w-6 h-6 flex items-center justify-center rounded-full border-2"
+              :class="index <= currentStep ? 'bg-yellow-400 border-yellow-400' : 'bg-white border-gray-300'"
+            >
+              <svg v-if="index < currentStep" class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <div v-if="index < steps" class="flex-1 h-1" :class="index < currentStep ? 'bg-yellow-400' : 'bg-gray-300'">
+            </div>
+          </template>
+        </div>
+        <div class="flex justify-between text-sm text-gray-700 mb-7">
+          <span v-for="index in steps" :key="index">Étape {{ index }}</span>
+        </div>
 
-        <form @submit.prevent="submitForm">
-          <!-- Étape 1 -->
-          <div v-if="step === 1">
+        <form @submit.prevent="submitForm" class="flex flex-col justify-between">
+
+          <div v-if="currentStep === 1">
             <div class="mb-3 md:mb-8">
               <label class="block text-gray-700">Nom *</label>
               <input required="true" type="text" v-model="form.nom" placeholder="LABELLE" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none " />
@@ -34,8 +48,7 @@
             </div>
           </div>
 
-          <!-- Étape 2 -->
-          <div v-if="step === 2">
+          <div v-if="currentStep === 2">
             <div class="mb-3 md:mb-8">
               <label class="block text-gray-700">Numéro de téléphone *</label>
               <input required type="text" v-model="form.numero" @focus="formatNumero" @input="formatNumero" placeholder="01 XXXXXXXX" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
@@ -54,17 +67,13 @@
             <div class="mb-3 md:mb-8">
               <label class="block text-gray-700">Quartier *</label>
               <input required type="text" v-model="form.district" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
-              <!-- <ul v-if="Districts.length">
-                <li v-for="(district, index) in suggestions" :key="index" @click="selectDistrict(district)">
-                  {{ district }}
-                </li>
-              </ul> -->
+              
               <p v-if="error.district" class="text-red-500 text-center">{{ error.district }}</p>
             </div>
           </div>
 
-          <!-- Étape 3 -->
-          <div v-if="step === 3">
+
+          <div v-if="currentStep === 3">
             <label class="block text-gray-700">Vérification OTP</label>
             <p class="text-gray-600 mb-2">Saisir le code envoyé au {{ form.numero }}</p>
             <div class="flex space-x-4 justify-center mb-6">
@@ -82,10 +91,28 @@
             <p v-if="otpError" class="text-red-500 mt-2 text-center">{{ otpError }}</p>
           </div>
 
-          <!-- Boutons -->
-          <div class="flex flex-col mb-5">
-            <button type="button" @click="nextStep" v-if="step < 3" class="bg-yellow-500 text-white py-3 md:py-4 px-4 rounded-lg w-full">Continuer</button>
-            <button type="submit" v-if="step === 3" class="bg-yellow-500 text-white py-3 md:py-4 px-4 rounded-lg w-full">Vous êtes prêt !</button>
+          <div v-if="currentStep === 4">
+            <div class="mb-3 md:mb-8">
+              <label class="block text-gray-700">Mot de passe *</label>
+              <input required type="password" v-model="form.password" placeholder="********" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
+              <p v-if="error.password" class="text-red-500 text-center">{{ error.password }}</p>
+            </div>
+            <div class="mb-3 md:mb-8">
+              <label class="block text-gray-700">Confirmer le mot de passe *</label>
+              <input required type="password" v-model="form.confirmPassword" placeholder="********" class="w-full px-4 py-3 md:py-4 border rounded-lg focus:outline-none" />
+              <p v-if="error.confirmPassword" class="text-red-500 text-center">{{ error.confirmPassword }}</p>
+            </div>
+          </div>
+
+          <div class="flex justify-between mt-4">
+            <button @click="prevStep" :disabled="currentStep === 1" class="px-7 py-4 bg-gray-300 rounded disabled:opacity-50 flex items-center">
+              <img width="20" height="20" src="https://img.icons8.com/fluency-systems-regular/48/left.png" alt="left"/>
+              <span class="ml-1">Précédent</span>
+            </button>
+            <button @click="nextStep" class="px-7 py-4 bg-yellow-500 text-white rounded disabled:opacity-50 flex items-center">
+              <span class="mr-1">Confirmer</span>
+              <img width="20" height="20" src="https://img.icons8.com/ios/50/right--v1.png" alt="right--v1"/>
+            </button>
           </div>
         </form>
       </div>
@@ -95,10 +122,14 @@
 
   
 <script>
+
+
 export default {
+  
   data() {
     return {
-      step: 1,
+      steps:4,
+      currentStep: 4,
       form: {
         nom: "",
         prenom: "",
@@ -136,7 +167,7 @@ export default {
     },
     validateStep() {
       this.error = {};
-      if (this.step === 1) {
+      if (this.currentStep === 1) {
         if (!this.form.nom) {
           this.error.nom = "Le nom est requis.";
         } else if (this.form.nom.length < 3) {
@@ -154,7 +185,7 @@ export default {
         } else if (this.calculateAge(this.form.date) < 18) {
           this.error.date = "Vous devez avoir au moins 18 ans pour vous inscrire.";
         }
-      } else if (this.step === 2) {
+      } else if (this.currentStep === 2) {
         if (!this.form.numero || this.form.numero.length !== 10) {
           this.error.numero = "Numéro de téléphone invalide.";
         }
@@ -169,11 +200,11 @@ export default {
     },
     nextStep() {
       if (this.validateStep()) {
-        this.step++;
+        this.currentStep++;
       }
     },
     prevStep() {
-      if (this.step > 1) this.step--;
+      if (this.currentStep > 1) this.currentStep--;
     },
     submitForm() {
       console.log("Formulaire soumis :", this.form);
@@ -228,5 +259,6 @@ li {
 li:hover {
   background-color: #f0f0f0;
 }
+
 </style>
   
