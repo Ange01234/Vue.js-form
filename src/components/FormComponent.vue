@@ -129,7 +129,7 @@ export default {
   data() {
     return {
       steps:4,
-      currentStep: 4,
+      currentStep: 1,
       form: {
         nom: "",
         prenom: "",
